@@ -19,39 +19,25 @@ public struct TicketNFT has key, store {
     event_id: ID,
     owner: address,
     price_paid: u64,
-    image_url: Url,
+    image_url: String,
 }
 
 public fun id(self: &TicketNFT): &UID {
     &self.id
 }
 
-public fun has_available_ticket(): bool {
-    //To do -> add call to event and check if avalable tickets > 0
-    //
-    true
-}
-
-public fun transfer_to_user() {
-
-}
-
 fun init(otw: TICKET_NFT, ctx: &mut TxContext) {
     let publisher = package::claim(otw, ctx);
     let keys = vector[
-        b"name".to_string(),
-        b"description".to_string(),
         b"event_id".to_string(),
-        b"user_id".to_string(),
+        b"owner".to_string(),
         b"price_paid".to_string(),
         b"image_url".to_string(),
     ];
 
     let values = vector[
-        b"{name}".to_string(),
-        b"{description}".to_string(),
         b"https://sambasocialticket.com/ticket/{id}".to_string(),
-        b"{links}".to_string(),
+       // b"{links}".to_string(),
         b"{event_id}".to_string(),
         b"{owner}".to_string(),
         b"{price_paid}".to_string(),
@@ -90,15 +76,13 @@ fun init(otw: TICKET_NFT, ctx: &mut TxContext) {
 //}
 
 public fun owner(self: &TicketNFT): address {
-    self.owner;
+    self.owner
 }
 
 
 public(package) fun mint(
-	name: String,
-	description: String,
-	event_id: UID,
-	user_id: address,
+	event_id: ID,
+	owner: address,
 	price_paid: u64,
 	image_url: String,
     ctx: &mut TxContext,
@@ -106,10 +90,8 @@ public(package) fun mint(
     
     TicketNFT {
         id: object::new(ctx),
-        name,
-        description,
         event_id,
-        user_id,
+        owner,
         price_paid,
         image_url
     }
