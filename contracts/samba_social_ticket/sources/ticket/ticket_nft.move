@@ -1,7 +1,5 @@
 module samba_social_ticket::ticket_nft;
 
-use samba_social_ticket::event;
-
 use std::string::{Self, String};
 use sui::object::{Self, ID, UID};
 use sui::tx_context::{Self, TxContext};
@@ -28,15 +26,24 @@ public fun id(self: &TicketNFT): &UID {
     &self.id
 }
 
+public fun has_available_ticket(): bool {
+    //To do -> add call to event and check if avalable tickets > 0
+    //
+    true
+}
+
+public fun transfer_to_user() {
+
+}
+
 fun init(otw: TICKET_NFT, ctx: &mut TxContext) {
     let publisher = package::claim(otw, ctx);
     let keys = vector[
         b"name".to_string(),
         b"description".to_string(),
-        b"links".to_string(),
         b"event_id".to_string(),
-        b"owner".to_string(),
-        b"tickets_available".to_string(),
+        b"user_id".to_string(),
+        b"price_paid".to_string(),
         b"image_url".to_string(),
     ];
 
@@ -47,6 +54,7 @@ fun init(otw: TICKET_NFT, ctx: &mut TxContext) {
         b"{links}".to_string(),
         b"{event_id}".to_string(),
         b"{owner}".to_string(),
+        b"{price_paid}".to_string(),
         b"{image_url}".to_string(),
     ];
 
@@ -87,20 +95,22 @@ public fun owner(self: &TicketNFT): address {
 
 
 public(package) fun mint(
-        event: &mut EventNFT,
-        owner: address,
-        price_paid: u64,
-        ctx: &mut TxContext,
-    ): TicketNFT {
-        assert!(event_nft::has_available_ticket(event), ETicketsSoldOut);
-
-        event_nft::decrease_tickets_available(event, 1);
-
-        TicketNFT {
-            id: object::new(ctx),
-            event_id: id(event),
-            owner,
-            price_paid,
-            image_url: url::new_unsafe_from_bytes(string::bytes(&event.thumbnail)),
-        }
+	name: String,
+	description: String,
+	event_id: UID,
+	user_id: address,
+	price_paid: u64,
+	image_url: String,
+    ctx: &mut TxContext,
+): TicketNFT {
+    
+    TicketNFT {
+        id: object::new(ctx),
+        name,
+        description,
+        event_id,
+        user_id,
+        price_paid,
+        image_url
     }
+}

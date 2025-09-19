@@ -63,5 +63,5 @@ public(package) fun collect_tax(config: &mut EventConfig, payment: Coin<SUI>) {
 }
 
 public fun get_create_event_tax(config: &EventConfig): u64 {
-    config.create_event_tax;
+    config.create_event_tax
 }
