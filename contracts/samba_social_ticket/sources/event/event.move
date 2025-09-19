@@ -2,12 +2,7 @@ module samba_social_ticket::event;
 
 use std::string::String;
 
-	event_date: u64,
-	location: Location,
-	total_capacity: u8,
-	tickets_available: u8,
-	//price: ??
-	organizer_id: UID
+//missing tax
 
 #[allow(lint(self_transfer))]
 public fun mint_event(

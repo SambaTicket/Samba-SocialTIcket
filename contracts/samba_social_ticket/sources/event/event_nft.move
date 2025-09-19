@@ -4,6 +4,8 @@ use std::string::String;
 use sui::display;
 use sui::package;
 
+const EInsufficientFunds: u64 = 0;
+
 
 public struct EVENT_NFT has drop {}
 
@@ -92,7 +94,7 @@ public(package) fun mint(
 
 
 public fun id(self: &EventNFT): &UID {
-    &self.id
+    &self.id;
 }
 
 
@@ -110,4 +112,8 @@ public fun update_description(self: &mut EventNFT, description: String) {
 
 public fun update_tickets_available(self: &mut EventNFT, amount: String) {
 	self.tickets_available = tickets_available - amount;
+}
+
+public fun has_available_ticket(self> &mut EvetNFT) {
+	return self.tickets_available > 0;
 }
