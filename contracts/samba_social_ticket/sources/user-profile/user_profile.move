@@ -29,8 +29,3 @@ public fun mint_profile(
     transfer::public_share_object(kiosk);
 }
 
-
-
-public fun mint_ticket() {
-	//to do
-}
