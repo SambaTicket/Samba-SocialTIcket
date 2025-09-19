@@ -17,21 +17,11 @@ public struct EventNFT has key, store {
 	thumbnail: String,
 	event_date: u64,
 	links: vector<String>,
-	//location: Location, //ACho que podemos ficar sem isso por enquanto e considerar que os eventos sao apeans online!
 	total_capacity: u64,
 	tickets_available: u64,
-	//price: ??
+	price: u64,
 	organizer: address
 }
-
-//public struct Location {
-//	type: String, //ONLINE | ON_SITE
-//	city: String,
-//	state: String, 
-//	address_location: String,
-//	description: String,
-//	url_access: String
-//}
 
 
 fun init(otw: EVENT_NFT, ctx: &mut TxContext) {
@@ -42,7 +32,7 @@ fun init(otw: EVENT_NFT, ctx: &mut TxContext) {
         b"links".to_string(),
         b"event_date".to_string(),
         b"total_capacity".to_string(),
-        b"tickets_available".to_string(),
+        //b"tickets_available".to_string(),
         b"organizer_id".to_string(),
     ];
 
