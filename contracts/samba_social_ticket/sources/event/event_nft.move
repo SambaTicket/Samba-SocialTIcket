@@ -16,11 +16,11 @@ public struct EventNFT has key, store {
 	thumbnail: String,
 	event_date: u64,
 	links: vector<String>,
-	//location: Location,
+	//location: Location, //ACho que podemos ficar sem isso por enquanto e considerar que os eventos sao apeans online!
 	total_capacity: u8,
 	tickets_available: u8,
 	//price: ??
-	organizer_id: UID
+	organizer_id: address
 }
 
 //public struct Location {
