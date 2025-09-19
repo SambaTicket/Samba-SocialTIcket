@@ -37,14 +37,24 @@ fun init(ctx: &mut TxContext) {
     transfer::share_object(config);
 }
 
+public entry fun set_create_event_tax(
+        _cap: &EventAdminCap,
+        config: &mut EventConfig,
+        new_tax: u64
+    ) {
+        config.create_event_tax = new_tax;
+}
+
 public entry fun withdraw_balance(
     _cap: &EventAdminCap,
     config: &mut EventConfig,
     ctx: &mut TxContext
 ) {
     let amount = config.balance.value();
-    let coins = coin::from_balance(config.balance.split(amount), ctx);
-    transfer::public_transfer(coins, tx_context::sender(ctx));
+    if (amount > 0) {
+            let coins = coin::from_balance(config.balance.split(amount), ctx);
+            transfer::public_transfer(coins, tx_context::sender(ctx));
+    }
 }
 
 public(package) fun collect_tax(config: &mut EventConfig, payment: Coin<SUI>) {
