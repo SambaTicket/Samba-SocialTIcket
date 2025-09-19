@@ -29,21 +29,19 @@ fun init(otw: EVENT_NFT, ctx: &mut TxContext) {
     let keys = vector[
         b"name".to_string(),
         b"description".to_string(),
-        b"links".to_string(),
         b"event_date".to_string(),
         b"total_capacity".to_string(),
-        //b"tickets_available".to_string(),
-        b"organizer_id".to_string(),
+        b"price".to_string(),
+        b"organizer".to_string(),
     ];
 
     let values = vector[
         b"Event: {name}".to_string(),
         b"{description}".to_string(),
-        b"https://sambasocialticket.com/b/{id}".to_string(),
-        b"{links}".to_string(),
-        b"{even_date}".to_string(),
+        b"{event_date}".to_string(),
         b"{total_capacity}".to_string(),
-        b"{organizer_id}".to_string(),
+        b"{price}".to_string(),
+        b"{organizer}".to_string(),
     ];
 
     let mut display = display::new_with_fields<EventNFT>(
@@ -65,6 +63,7 @@ public(package) fun mint(
 	event_date: u64,
 	links: vector<String>,
 	total_capacity: u64,
+	price: u64,
 	organizer: address,
     ctx: &mut TxContext,
 ): EventNFT {
@@ -77,13 +76,14 @@ public(package) fun mint(
 		links,
 		total_capacity,
 		tickets_available: total_capacity,
+		price,
 		organizer
     }
 }
 
 
 public fun id(self: &EventNFT): &UID {
-    &self.id;
+    &self.id
 }
 
 public fun update_name(self: &mut EventNFT, name: String) {
@@ -99,8 +99,8 @@ public fun update_description(self: &mut EventNFT, description: String) {
 }
 
 
-public fun has_available_ticket(self> &mut EventNFT): bool {
-	return self.tickets_available > 0;
+public fun has_available_ticket(self: &EventNFT): bool {
+	self.tickets_available > 0
 }
 
 public(package) fun decrease_tickets_available(self: &mut EventNFT, amount: u64) {

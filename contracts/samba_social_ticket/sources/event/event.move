@@ -10,6 +10,11 @@ use sui::coin::Coin;
 use samba_social_ticket::event_config::{Self, EventConfig};
 use samba_social_ticket::event_nft;
 
+// Define Location as a simple string for now
+public struct Location has store, drop {
+    address: String
+}
+
 //missing tax
 
 #[allow(lint(self_transfer))]
@@ -19,8 +24,8 @@ public fun create_event(
     thumbnail: String,
     links: vector<String>,
     event_date: u64,
-    location: Location,
     total_capacity: u64,
+    price: u64,
     config: &mut EventConfig,
     payment: Coin<SUI>,
     ctx: &mut TxContext,
@@ -35,11 +40,10 @@ public fun create_event(
         name,
         description,
         thumbnail,
-        links,
         event_date,
-        location,
+        links,
         total_capacity,
-        tickets_available,
+        price,
         sender,
         ctx,
     );

@@ -1,8 +1,5 @@
 module samba_social_ticket::user_profile_nft;
 
-use samba_social_ticket::Tickets;
-use samba_social_ticket::Events;
-
 use std::string::String;
 use sui::display;
 use sui::package;
@@ -15,9 +12,7 @@ public struct UserProfileNFT has key, store {
 	name: String,
 	pfp: String,
 	bio: String,
-	links: vector<String>,
-    ownedTickets: vector<Tickets>;
-    ownedEvents: vector<Events>;
+	links: vector<String>
 }
 
 fun init(otw: USER_PROFILE_NFT, ctx: &mut TxContext) {
@@ -67,14 +62,12 @@ public(package) fun mint(
         pfp,
         bio,
         links
-        //ownedEvents and ownedTickets must be initialized empty.
-
     }
 }
 
 
 public fun id(self: &UserProfileNFT): &UID {
-    &self.id;
+    &self.id
 }
 
 
@@ -96,12 +89,4 @@ public fun add_link(self: &mut UserProfileNFT, link: String) {
 
 public fun remove_link(self: &mut UserProfileNFT, index: u64) {
     self.links.remove(index);
-}
-
-public fun get_owned_events(self: &mut UserProfileNFT) {
-    return self.ownedEvents;
-}
-
-public fun get_owned_tickets(self: &mut UserProfileNFT) {
-    return self.ownedTickets;
 }
