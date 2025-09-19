@@ -114,6 +114,6 @@ public fun update_tickets_available(self: &mut EventNFT, amount: String) {
 	self.tickets_available = tickets_available - amount;
 }
 
-public fun has_available_ticket(self> &mut EvetNFT) {
+public fun has_available_ticket(self> &mut EvetNFT): bool {
 	return self.tickets_available > 0;
 }
