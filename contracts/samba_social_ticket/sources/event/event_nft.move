@@ -4,8 +4,9 @@ use std::string::String;
 use sui::display;
 use sui::package;
 
-const EInsufficientFunds: u64 = 0;
 
+const ETicketsSoldOut: u64 = 0;
+const EInvalidAmount: u64 = 1;
 
 public struct EVENT_NFT has drop {}
 
@@ -17,10 +18,10 @@ public struct EventNFT has key, store {
 	event_date: u64,
 	links: vector<String>,
 	//location: Location, //ACho que podemos ficar sem isso por enquanto e considerar que os eventos sao apeans online!
-	total_capacity: u8,
-	tickets_available: u8,
+	total_capacity: u64,
+	tickets_available: u64,
 	//price: ??
-	organizer_id: address
+	organizer: address
 }
 
 //public struct Location {
@@ -73,10 +74,8 @@ public(package) fun mint(
 	thumbnail: String,
 	event_date: u64,
 	links: vector<String>,
-	total_capacity: u8,
-	tickets_available: u8,
-	organizer_id: UID
-    links: vector<String>,
+	total_capacity: u64,
+	organizer: address,
     ctx: &mut TxContext,
 ): EventNFT {
     EventNFT {
@@ -87,8 +86,8 @@ public(package) fun mint(
 		event_date,
 		links,
 		total_capacity,
-		tickets_available,
-		organizer_id
+		tickets_available: total_capacity,
+		organizer
     }
 }
 
@@ -96,7 +95,6 @@ public(package) fun mint(
 public fun id(self: &EventNFT): &UID {
     &self.id;
 }
-
 
 public fun update_name(self: &mut EventNFT, name: String) {
     self.name = name;
@@ -110,10 +108,12 @@ public fun update_description(self: &mut EventNFT, description: String) {
     self.description = description;
 }
 
-public fun update_tickets_available(self: &mut EventNFT, amount: String) {
-	self.tickets_available = tickets_available - amount;
+
+public fun has_available_ticket(self> &mut EventNFT): bool {
+	return self.tickets_available > 0;
 }
 
-public fun has_available_ticket(self> &mut EvetNFT): bool {
-	return self.tickets_available > 0;
+public(package) fun decrease_tickets_available(self: &mut EventNFT, amount: u64) {
+    assert!(self.tickets_available >= amount, ETicketsSoldOut);
+    self.tickets_available = self.tickets_available - amount;
 }
