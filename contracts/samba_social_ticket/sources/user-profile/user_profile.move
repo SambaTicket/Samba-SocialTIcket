@@ -1,8 +1,8 @@
 module samba_social_ticket::user_profile;
 
-use samba_social_ticket::user_profile_nft::{Self, UserProfileNFT};
+use samba_social_ticket::user_profile_nft;
 use std::string::String;
-use sui::dynamic_object_field as dof;
+use sui::kiosk::{Self, Kiosk, KioskOwnerCap};
 
 #[allow(lint(self_transfer))]
 public fun mint_profile(
@@ -12,16 +12,20 @@ public fun mint_profile(
     links: vector<String>,
     ctx: &mut TxContext,
 ) {
-    let mut profile = user_profile_nft::mint(name, pfp, bio, ctx);
-
-    //let new_feed = feed::new_feed(ctx);
-    //dof::add(user_profile_nft::id_mut(&mut social), b"feed".to_string(), new_feed);
-
     let sender = tx_context::sender(ctx);
+    let (mut kiosk, kiosk_cap): (Kiosk, KioskOwnerCap) = kiosk::new(ctx);
 
-    transfer::public_transfer(profile, sender);
+    let profile_nft = user_profile_nft::mint(
+        name,
+        pfp,
+        bio,
+        links,
+        ctx,
+    );
+
+    kiosk::place(&mut kiosk, &kiosk_cap, profile_nft);
+    
+    transfer::public_transfer(kiosk_cap, sender);
+    transfer::public_share_object(kiosk);
 }
 
-public fun mint_ticket() {
-	//to do
-}
