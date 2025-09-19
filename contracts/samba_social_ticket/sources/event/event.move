@@ -1,22 +1,33 @@
 module samba_social_ticket::event;
 
 use std::string::String;
+use sui::tx_context::{Self, TxContext};
+use sui::transfer;
+use sui::kiosk::{Self, Kiosk, KioskOwnerCap};
+use sui::sui::SUI;
+use sui::coin::Coin;
+
+use samba_social_ticket::event_config::{Self, EventConfig};
+use samba_social_ticket::event_nft;
 
 //missing tax
 
 #[allow(lint(self_transfer))]
-public fun mint_event(
+public fun create_event(
     name: String,
     description: String,
     thumbnail: String,
     links: vector<String>,
     event_date: u64,
     location: Location,
-    total_capacity: u8,
-    tickets_available: u8,
-    organizer_id: UID
+    total_capacity: u64,
+    config: &mut EventConfig,
+    payment: Coin<SUI>,
     ctx: &mut TxContext,
 ) {
+
+    event_config::collect_tax(config, payment);
+
     let sender = tx_context::sender(ctx);
     let (mut kiosk, kiosk_cap): (Kiosk, KioskOwnerCap) = kiosk::new(ctx);
 
@@ -29,7 +40,7 @@ public fun mint_event(
         location,
         total_capacity,
         tickets_available,
-        organizer_id,
+        sender,
         ctx,
     );
 
