@@ -12,10 +12,7 @@ public struct UserProfileNFT has key, store {
 	name: String,
 	pfp: String,
 	bio: String,
-	links: vector<String>,
-	//pastEvents: vector<Event> //we don't have this yet.
-	//futureEvents: vector<Event> //esse nome não ta mt bom
-
+	links: vector<String>
 }
 
 fun init(otw: USER_PROFILE_NFT, ctx: &mut TxContext) {
@@ -65,8 +62,6 @@ public(package) fun mint(
         pfp,
         bio,
         links
-        //pastEvents and futureEvents must be initialized empty.
-
     }
 }
 
