@@ -2,37 +2,30 @@ module samba_social_ticket::ticket_nft;
 
 use samba_social_ticket::event;
 
-use std::string::String;
-use sui::display;
+use std::string::{Self, String};
+use sui::object::{Self, ID, UID};
+use sui::tx_context::{Self, TxContext};
+use sui::transfer;
 use sui::package;
+use sui::display;
+use sui::url::{Self, Url};
+
 
 const EInsufficientFunds: u64 = 0;
-const ETicketsSoldOut: u64 = 0;
+const ETicketsSoldOut: u64 = 1;
 
 public struct TICKET_NFT has drop {}
 
 public struct TicketNFT has key, store {
 	id: UID,
-	name: String,
-	description: String,
-    event_id: UID,
-    user_id: address,
+    event_id: ID,
+    owner: address,
     price_paid: u64,
-    image_url: String,
+    image_url: Url,
 }
 
 public fun id(self: &TicketNFT): &UID {
-    &self.id;
-}
-
-public fun has_available_ticket(): Boolean {
-    //To do -> add call to event and check if avalable tickets > 0
-    //
-    return true;
-}
-
-public fun transfer_to_user() {
-
+    &self.id
 }
 
 fun init(otw: TICKET_NFT, ctx: &mut TxContext) {
@@ -42,7 +35,7 @@ fun init(otw: TICKET_NFT, ctx: &mut TxContext) {
         b"description".to_string(),
         b"links".to_string(),
         b"event_id".to_string(),
-        b"user_id".to_string(),
+        b"owner".to_string(),
         b"tickets_available".to_string(),
         b"image_url".to_string(),
     ];
@@ -50,10 +43,10 @@ fun init(otw: TICKET_NFT, ctx: &mut TxContext) {
     let values = vector[
         b"{name}".to_string(),
         b"{description}".to_string(),
-        b"https://sambasocialticket.com/b/{id}".to_string(),
+        b"https://sambasocialticket.com/ticket/{id}".to_string(),
         b"{links}".to_string(),
         b"{event_id}".to_string(),
-        b"{user_id}".to_string(),
+        b"{owner}".to_string(),
         b"{image_url}".to_string(),
     ];
 
@@ -69,25 +62,45 @@ fun init(otw: TICKET_NFT, ctx: &mut TxContext) {
     transfer::public_transfer(display, ctx.sender());
 }
 
-public(package) fun mint(
-	name: String,
-	description: String,
-	thumbnail: String,
-	user_id: UID,
-	event_id: UID,
-	links: vector<String>,
-    ctx: &mut TxContext,
-): TicketNFT {
+//public(package) fun mint(
+//	thumbnail: String,
+//	owner: address,
+//	event_id: UID,
+//	links: vector<String>,
+//    ctx: &mut TxContext,
+//): TicketNFT {
+//
+//    event::has_available_ticket(event_id);
+//
+//    TicketNFT {
+//        id: object::new(ctx),
+//		thumbnail,
+//		links,
+//		owner_id,
+//        event_id
+//    }
+//}
 
-    event::has_available_ticket(event_id);
-    
-    TicketNFT {
-        id: object::new(ctx),
-        name,
-        description,
-		thumbnail,
-		links,
-		user_id,
-        event_id
-    }
+public fun owner(self: &TicketNFT): address {
+    self.owner;
 }
+
+
+public(package) fun mint(
+        event: &mut EventNFT,
+        owner: address,
+        price_paid: u64,
+        ctx: &mut TxContext,
+    ): TicketNFT {
+        assert!(event_nft::has_available_ticket(event), ETicketsSoldOut);
+
+        event_nft::decrease_tickets_available(event, 1);
+
+        TicketNFT {
+            id: object::new(ctx),
+            event_id: id(event),
+            owner,
+            price_paid,
+            image_url: url::new_unsafe_from_bytes(string::bytes(&event.thumbnail)),
+        }
+    }
