@@ -36,7 +36,7 @@ fun init(otw: TICKET_NFT, ctx: &mut TxContext) {
     ];
 
     let values = vector[
-        b"https://sambasocialticket.com/ticket/{id}".to_string(),
+       // b"https://sambasocialticket.com/ticket/{id}".to_string(),
        // b"{links}".to_string(),
         b"{event_id}".to_string(),
         b"{owner}".to_string(),
